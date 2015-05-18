@@ -5,18 +5,42 @@ use std::path::{Path, PathBuf, Component};
 use std::fs::PathExt;
 use std::fs::create_dir;
 use std::convert::From;
+use std::ffi::OsString;
 
+#[cfg(unix)]
 fn print_cd(p: &Path)  {
     println!("cd '{}';", p.display());
 }
 
+#[cfg(windows)]
+fn print_cd(p: &Path)  {
+    println!("cd /d {}", p.display());
+}
+
+
+#[cfg(unix)]
 fn setenv(var: &str, val: &Path) {
     println!("export {}='{}';", var, val.display());
 }
 
+#[cfg(windows)]
+fn setenv(var: &str, val: &Path) {
+    println!("set {}={}", var, val.display());
+}
+
+#[cfg(unix)]
+fn get_username() -> OsString {
+    var_os("USER").expect("Unknown username")
+}
+
+#[cfg(windows)]
+fn get_username() -> OsString {
+    var_os("USERNAME").expect("Unknown username")
+}
+
 fn main() {
 
-    let username = var_os("USER").unwrap();
+    let username = get_username();
     let mut mytmp: PathBuf = match var_os("TMPDIR") {
         Some(s) => From::from(s),
         None => { let mut h = home_dir().expect("Unable to determine HOME directory"); h.push("tmp"); h}
