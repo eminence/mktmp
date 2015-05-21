@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use std::ffi::{OsString, OsStr};
 use std::env::var_os;
 use std::convert::AsRef;
@@ -17,7 +17,7 @@ const PLATFORM: Platform = Platform::Windows;
 #[cfg(unix)]
 const PLATFORM: Platform = Platform::Linux;
 
-mod Windows {
+mod windows {
     use std::path::Path;
     use std::ffi::{OsString, OsStr};
     use std::env::var_os;
@@ -35,7 +35,7 @@ mod Windows {
     }
 }
 
-mod Bash {
+mod bash {
     use std::path::Path;
     use std::ffi::{OsString, OsStr};
     use std::env::var_os;
@@ -54,7 +54,7 @@ mod Bash {
 
 }
 
-mod Tcsh {
+mod tcsh {
     use std::path::Path;
     use std::ffi::{OsString, OsStr};
     use std::env::var_os;
@@ -91,8 +91,8 @@ impl Impl {
             match var_os("SHELL") {
                 None => Shell::Bash,
                 Some(oss) => match oss.to_str() {
-                    Some("tcsh") => Shell::Tcsh,
-                    _ => Shell::Tcsh
+                    Some("/bin/tcsh") => Shell::Tcsh,
+                    _ => Shell::Bash
                 }
             }
         };
@@ -100,23 +100,23 @@ impl Impl {
     }
     pub fn cd<P: AsRef<Path>>(&self, p: P) {
         match self.shell {
-            Shell::Windows => Windows::cd(p),
-            Shell::Bash => Bash::cd(p),
-            Shell::Tcsh => Tcsh::cd(p)
+            Shell::Windows => windows::cd(p),
+            Shell::Bash => bash::cd(p),
+            Shell::Tcsh => tcsh::cd(p)
         }
     }
     pub fn get_username(&self) -> OsString {
         match self.shell {
-            Shell::Windows => Windows::get_username(),
-            Shell::Bash => Bash::get_username(),
-            Shell::Tcsh => Tcsh::get_username()
+            Shell::Windows => windows::get_username(),
+            Shell::Bash => bash::get_username(),
+            Shell::Tcsh => tcsh::get_username()
         }
     }
     pub fn setenv<S: AsRef<OsStr>, T: AsRef<OsStr>>(&self, var: S, val: T) {
         match self.shell {
-            Shell::Windows => Windows::setenv(var, val),
-            Shell::Bash => Bash::setenv(var, val),
-            Shell::Tcsh => Tcsh::setenv(var, val)
+            Shell::Windows => windows::setenv(var, val),
+            Shell::Bash => bash::setenv(var, val),
+            Shell::Tcsh => tcsh::setenv(var, val)
         }
     }
 }

@@ -5,8 +5,6 @@ use std::path::{Path, PathBuf, Component};
 use std::fs::PathExt;
 use std::fs::create_dir;
 use std::convert::From;
-use std::ffi::OsString;
-use std::convert::AsRef;
 
 mod plat_funcs;
 
