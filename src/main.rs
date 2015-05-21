@@ -6,41 +6,15 @@ use std::fs::PathExt;
 use std::fs::create_dir;
 use std::convert::From;
 use std::ffi::OsString;
+use std::convert::AsRef;
 
-#[cfg(unix)]
-fn print_cd(p: &Path)  {
-    println!("cd '{}';", p.display());
-}
+mod plat_funcs;
 
-#[cfg(windows)]
-fn print_cd(p: &Path)  {
-    println!("cd /d {}", p.display());
-}
-
-
-#[cfg(unix)]
-fn setenv(var: &str, val: &Path) {
-    println!("export {}='{}';", var, val.display());
-}
-
-#[cfg(windows)]
-fn setenv(var: &str, val: &Path) {
-    println!("set {}={}", var, val.display());
-}
-
-#[cfg(unix)]
-fn get_username() -> OsString {
-    var_os("USER").expect("Unknown username")
-}
-
-#[cfg(windows)]
-fn get_username() -> OsString {
-    var_os("USERNAME").expect("Unknown username")
-}
 
 fn main() {
+    let funcs = plat_funcs::Impl::new();
 
-    let username = get_username();
+    let username = funcs.get_username();
     let mut mytmp: PathBuf = match var_os("TMPDIR") {
         Some(s) => From::from(s),
         None => { let mut h = home_dir().expect("Unable to determine HOME directory"); h.push("tmp"); h}
@@ -57,7 +31,7 @@ fn main() {
         let _p = prevtmp.unwrap();
         let prevtmp_path : &Path = Path::new(&_p);
         if prevtmp_path.exists() && !want_new {
-            print_cd(prevtmp_path);
+            funcs.cd(prevtmp_path);
             return;
         }
     }
@@ -67,8 +41,8 @@ fn main() {
         if create_dir(&tmp).is_err() {
             continue;
         }
-        print_cd(&tmp);
-        setenv("MYTMP", &tmp);
+        funcs.cd(&tmp);
+        funcs.setenv("MYTMP", tmp);
         return;
     }
 
