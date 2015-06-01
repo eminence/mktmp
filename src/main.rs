@@ -1,9 +1,9 @@
-#![feature(path_ext)] 
+#![feature(path_ext)]
 
 use std::env::{home_dir, var_os, args_os};
 use std::path::{Path, PathBuf, Component};
 use std::fs::PathExt;
-use std::fs::create_dir;
+use std::fs::{create_dir, create_dir_all};
 use std::convert::From;
 
 mod plat_funcs;
@@ -19,6 +19,9 @@ fn main() {
     };
     if !mytmp.components().filter_map(|x| match x { Component::Normal(s) => Some(s), _ => None}).any(|x| x.to_str() == username.to_str()) {
         mytmp.push(username);
+    }
+    if !mytmp.exists() {
+        create_dir_all(&mytmp).unwrap();
     }
 
     let want_new: bool = args_os().any(|ref arg| arg == "-new");
