@@ -1,10 +1,9 @@
 #![feature(path_ext)] 
 
 use std::env::{home_dir, var_os, args_os};
-use std::path::{Path, PathBuf, AsPath};
+use std::path::{Path, PathBuf};
 use std::fs::PathExt;
 use std::fs::create_dir;
-use std::ffi::{OsStr, AsOsStr};
 
 fn print_cd(p: &Path)  {
     println!("cd '{}';", p.display());
