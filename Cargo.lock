@@ -1,4 +1,12 @@
 [root]
 name = "mktmp"
 version = "0.0.1"
+dependencies = [
+ "setenv 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "setenv"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 

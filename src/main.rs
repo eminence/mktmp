@@ -1,18 +1,25 @@
-#![feature(path_ext)]
+extern crate setenv;
+
 
 use std::env::{home_dir, var_os, args_os};
 use std::path::{Path, PathBuf, Component};
-use std::fs::PathExt;
 use std::fs::{create_dir, create_dir_all};
 use std::convert::From;
+use std::ffi::OsString;
 
-mod plat_funcs;
 
+fn get_username() -> OsString {
+    if cfg!(windows) {
+        var_os("USERNAME").expect("Unknown username")
+    } else {
+        var_os("USER").expect("Unknown username")
+    }
+}
 
 fn main() {
-    let funcs = plat_funcs::Impl::new();
+    let shell = setenv::get_shell();
 
-    let username = funcs.get_username();
+    let username = get_username();
     let mut mytmp: PathBuf = match var_os("TMPDIR") {
         Some(s) => From::from(s),
         None => { let mut h = home_dir().expect("Unable to determine HOME directory"); h.push("tmp"); h}
@@ -32,18 +39,18 @@ fn main() {
         let _p = prevtmp.unwrap();
         let prevtmp_path : &Path = Path::new(&_p);
         if prevtmp_path.exists() && !want_new {
-            funcs.cd(prevtmp_path);
+            shell.cd(prevtmp_path);
             return;
         }
     }
 
-    for i in (0..99) {
+    for i in 0..99 {
         let tmp = mytmp.join(format!("{0:02}", i));
         if create_dir(&tmp).is_err() {
             continue;
         }
-        funcs.cd(&tmp);
-        funcs.setenv("MYTMP", tmp);
+        shell.cd(&tmp);
+        shell.setenv("MYTMP", tmp);
         return;
     }
 

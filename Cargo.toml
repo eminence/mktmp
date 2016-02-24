@@ -2,3 +2,6 @@
 name = "mktmp"
 version = "0.0.1"
 authors = ["Andrew Chin <achin@eminence32.net>"]
+
+[dependencies]
+setenv = "0.1"
