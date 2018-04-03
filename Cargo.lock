@@ -1,4 +1,4 @@
-[root]
+[[package]]
 name = "mktmp"
 version = "0.0.1"
 dependencies = [
@@ -10,3 +10,5 @@ name = "setenv"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
+[metadata]
+"checksum setenv 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2c001a3ee338baa312fd69765fc9a38e3989bee67726a51d7ca99de07b21d92c"
